@@ -1,16 +1,16 @@
-# 🏗 Scaffold-ETH - 🎟 Simple NFT Example
+# 🏗 Scaffold-ETH - 🎟 Weather Derivative NFT Example
 
-> Build, mint, and send around your own ERC721!
+> Build, mint, and send around your own weather index ERC721!
 
 # 🏃‍♀️ Quick Start
 Required: [Node](https://nodejs.org/dist/latest-v12.x/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) and [Git](https://git-scm.com/downloads)
 
 ```
-git clone https://github.com/austintgriffith/scaffold-eth.git simple-nft-example
+git clone https://github.com/austintgriffith/scaffold-eth.git weather-index-nft
 ```
 ```
-cd simple-nft-example
-git checkout simple-nft-example
+cd weather-index-nft
+git checkout weather-index-nft
 yarn install
 yarn start
 ```
@@ -18,14 +18,14 @@ yarn start
 > in a second terminal window, start your 📱 frontend:
 
 ```
-cd simple-nft-example
+cd weather-index-nft
 yarn chain
 ```
 
 > in a third terminal window, 🛰 deploy your contract:
 
 ```
-cd simple-nft-example
+cd weather-index-nft
 yarn deploy --network NETWORK_OF_CHOICE (localhost, kovan, rinkeby, mainnet)
 ```
 
@@ -55,11 +55,11 @@ yarn mint
 
 ![nft5](https://user-images.githubusercontent.com/526558/124387008-58ae3280-dcb3-11eb-920d-07b6118f1ab2.png)
 
-🕵🏻‍♂️ Inspect the `Debug Contracts` tab to figure out what address is the `owner` of `YourCollectible`?
+🕵🏻‍♂️ Inspect the `Debug Contracts` tab to figure out what address is the `owner` of `WeatherDerivative`?
 
 💼 Edit your deployment script `deploy.js` in `packages/hardhat/scripts`
 
-🔏 Edit your smart contract `YourCollectible.sol` in `packages/hardhat/contracts`
+🔏 Edit your smart contract `WeatherDerivative.sol` in `packages/hardhat/contracts`
 
 📝 Edit your frontend `App.jsx` in `packages/react-app/src`
 

@@ -60,7 +60,8 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+// const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.kovan;
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -286,28 +287,28 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
+  const balance = useContractReader(readContracts, "WeatherDerivative", "balanceOf", [address]);
   console.log("🤗 balance:", balance);
 
   // 📟 Listen for broadcast events
-  const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
+  const transferEvents = useEventListener(readContracts, "WeatherDerivative", "Transfer", localProvider, 1);
   console.log("📟 Transfer events:", transferEvents);
 
   //
-  // 🧠 This effect will update yourCollectibles by polling when your balance changes
+  // 🧠 This effect will update weatherDerivatives by polling when your balance changes
   //
   const yourBalance = balance && balance.toNumber && balance.toNumber();
-  const [yourCollectibles, setYourCollectibles] = useState();
+  const [weatherDerivatives, setWeatherDerivatives] = useState();
 
   useEffect(() => {
-    const updateYourCollectibles = async () => {
+    const updateWeatherDerivatives = async () => {
       const collectibleUpdate = [];
       for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
         try {
           console.log("GEtting token index", tokenIndex);
-          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
+          const tokenId = await readContracts.WeatherDerivative.tokenOfOwnerByIndex(address, tokenIndex);
           console.log("tokenId", tokenId);
-          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+          const tokenURI = await readContracts.WeatherDerivative.tokenURI(tokenId);
           console.log("tokenURI", tokenURI);
 
           const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
@@ -326,9 +327,9 @@ function App(props) {
           console.log(e);
         }
       }
-      setYourCollectibles(collectibleUpdate);
+      setWeatherDerivatives(collectibleUpdate);
     };
-    updateYourCollectibles();
+    updateWeatherDerivatives();
   }, [address, yourBalance]);
 
   /*
@@ -547,7 +548,7 @@ function App(props) {
               }}
               to="/"
             >
-              YourCollectibles
+              WeatherDerivatives
             </Link>
           </Menu.Item>
           <Menu.Item key="/transfers">
@@ -602,7 +603,7 @@ function App(props) {
             <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
               <List
                 bordered
-                dataSource={yourCollectibles}
+                dataSource={weatherDerivatives}
                 renderItem={item => {
                   const id = item.id.toNumber();
                   return (
@@ -641,7 +642,7 @@ function App(props) {
                         <Button
                           onClick={() => {
                             console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
+                            tx(writeContracts.WeatherDerivative.transferFrom(address, transferToAddresses[id], id));
                           }}
                         >
                           Transfer
@@ -748,7 +749,15 @@ function App(props) {
           </Route>
           <Route path="/debugcontracts">
             <Contract
-              name="YourCollectible"
+              name="WeatherDerivative"
+              signer={userSigner}
+              provider={localProvider}
+              address={address}
+              blockExplorer={blockExplorer}
+              contractConfig={contractConfig}
+            />
+            <Contract
+              name="ClaimsEngine"
               signer={userSigner}
               provider={localProvider}
               address={address}
