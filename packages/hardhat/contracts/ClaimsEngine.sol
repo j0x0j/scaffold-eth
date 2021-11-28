@@ -4,11 +4,11 @@ pragma solidity >=0.8.0 <0.9.0;
 
 // import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "./WeatherDerivative.sol";
 
-contract ClaimsEngine is ChainlinkClient, ReentrancyGuard, Ownable {
+contract ClaimsEngine is ChainlinkClient, Ownable {
     using Chainlink for Chainlink.Request;
 
     // Chainlink properties
@@ -149,7 +149,7 @@ contract ClaimsEngine is ChainlinkClient, ReentrancyGuard, Ownable {
 
         // The api handler should retrieve token properties for evaluating event from IPFS using the tokenURI
         //     ex. locationId, basinId, lossLimit
-        string memory reqUrl = string(abi.encodePacked(claimsURI, "/evaluation.json?tokenId=", uint2str(tokenId), "&eventId=", eventId));
+        string memory reqUrl = string(abi.encodePacked(claimsURI, "/evaluation.json?tokenId=", Strings.toString(tokenId), "&eventId=", eventId));
 
         // Set the URL to perform the GET request on
         request.add("get", reqUrl);
@@ -234,7 +234,6 @@ contract ClaimsEngine is ChainlinkClient, ReentrancyGuard, Ownable {
      */
     function withdrawPool(uint256 amount)
         public
-        nonReentrant
         onlyOwner
         returns(bool)
     {
@@ -253,39 +252,10 @@ contract ClaimsEngine is ChainlinkClient, ReentrancyGuard, Ownable {
      */
     function withdrawLink()
         external
-        nonReentrant
         onlyOwner
     {
         LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
 
-        require(link.transfer(msg.sender, link.balanceOf(address(this))), "Claims Engine: Unable to transfer LINK");
-    }
-
-    /**
-     * @notice Helper function
-     * @dev Converts a uint to a string
-     * @param _i The uint
-     * @return _uintAsString The string value
-     */
-    function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len;
-        while (_i != 0) {
-            k = k-1;
-            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
-            bytes1 b1 = bytes1(temp);
-            bstr[k] = b1;
-            _i /= 10;
-        }
-        return string(bstr);
+        require(link.transfer(msg.sender, link.balanceOf(address(this))), "ClaimsEngine: Unable to transfer LINK");
     }
 }

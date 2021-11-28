@@ -100,7 +100,6 @@ contract WeatherDerivative is ERC721Enumerable, ReentrancyGuard, Ownable {
     function mintItem(address to, string memory wdtTokenURI, uint[] memory payoutOptions)
         public
         payable
-        nonReentrant
         onlyOwner
         returns (uint256)
     {
@@ -155,7 +154,7 @@ contract WeatherDerivative is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
 
     // Withdrawal by owner of any balance (eth) sent to the contract
-    function withdraw() public nonReentrant onlyOwner {
+    function withdraw() public onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 }
