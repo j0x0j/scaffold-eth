@@ -218,6 +218,7 @@ contract ClaimsEngine is ChainlinkClient, Ownable {
         public
         returns(bool)
     {
+        require(wdtToken.exists(tokenId), "ClaimsEngine: Token does not exist");
         require(balances[tokenId] == 0, "ClaimsEngine: Can only deposit once, when minting");
         uint256 amount = msg.value;
         balances[tokenId] = amount;

@@ -112,11 +112,11 @@ contract WeatherDerivative is ERC721Enumerable, ReentrancyGuard, Ownable {
         // Create an escrow for each minted token
         escrows[id] = new Escrow();
 
-        // Deposits `msg.value` into risk pool for minter as the payee
-        claimsEngine.depositPool{value:msg.value}(id, payoutOptions);
-
         _mint(to, id);
         setTokenURI(id, wdtTokenURI);
+
+        // Deposits `msg.value` into risk pool for minter as the payee
+        claimsEngine.depositPool{value:msg.value}(id, payoutOptions);
 
         return id;
     }
@@ -131,6 +131,7 @@ contract WeatherDerivative is ERC721Enumerable, ReentrancyGuard, Ownable {
         public
         payable
     {
+        require(_exists(tokenId), "WeatherDerivative: Token does not exist");
         require(msg.sender == address(claimsEngine), "WeatherDerivative: Only claims engine allowed to deposit");
         require(msg.value == amount);
         // Get the token escrow
@@ -151,6 +152,15 @@ contract WeatherDerivative is ERC721Enumerable, ReentrancyGuard, Ownable {
         Escrow escrow = escrows[tokenId];
         // Move any value in escrow to owner of the token
         escrow.withdraw(payable(this.ownerOf(tokenId)));
+    }
+
+    /**
+     * @dev Checks if `tokenId` exists
+     * @param tokenId The token id 
+     * @return existance of token
+     */
+    function exists(uint256 tokenId) public view returns (bool) {
+        return _exists(tokenId);
     }
 
     // Withdrawal by owner of any balance (eth) sent to the contract
